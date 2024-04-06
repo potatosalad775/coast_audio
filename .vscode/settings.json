@@ -8,4 +8,5 @@
     "__config": "c",
     "dart_types.h": "c"
   },
+  "cmake.sourceDirectory": "/Users/potatosalad/Project/coast_audio/native",
 }
