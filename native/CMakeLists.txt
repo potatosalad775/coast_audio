@@ -39,4 +39,8 @@ elseif ("${OS}" STREQUAL "LINUX")
   install (TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION .
   )
+elseif ("${OS}" STREQUAL "WIN32")
+  install (TARGETS ${PROJECT_NAME}
+          LIBRARY DESTINATION .
+  )
 endif()
