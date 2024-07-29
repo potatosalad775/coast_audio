@@ -16,22 +16,23 @@ do
   cd build/windows/$ABI
 
   # Use MXE's CMake
-  ${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.static-cmake ../../.. \
+  ${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.shared-cmake ../../.. \
     -DCMAKE_INSTALL_PREFIX="../../../build/windows/$ABI" \
-    -DCMAKE_TOOLCHAIN_FILE="${MXE_DIR}/usr/${ABI}-w64-mingw32.static/share/cmake/mxe-conf.cmake" \
-    -DCMAKE_C_COMPILER="${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.static-clang" \
-    -DCMAKE_CXX_COMPILER="${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.static-clang++" \
+    -DCMAKE_TOOLCHAIN_FILE="${MXE_DIR}/usr/${ABI}-w64-mingw32.shared/share/cmake/mxe-conf.cmake" \
+    -DCMAKE_C_COMPILER="${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.shared-gcc" \
+    -DCMAKE_CXX_COMPILER="${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.shared-g++" \
     -DOS=WIN32 \
-    -DCMAKE_CFLAGS='-DMAB_WIN32' \
-    -DCMAKE_CXX_FLAGS='-DMAB_WIN32'
+    -DCMAKE_C_FLAGS='-DMAB_WIN32' \
+    -DCMAKE_CXX_FLAGS='-DMAB_WIN32' \
+    -DBUILD_SHARED_LIBS=ON
 
   # Build and Install
-  cmake --build . --config Release
-  cmake --install . --config Release
+  ${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.shared-cmake --build . --config Release
+  ${MXE_DIR}/usr/bin/${ABI}-w64-mingw32.shared-cmake --install . --config Release
 
   cd ../../..
   mkdir -p prebuilt/windows/$ABI
-  cp "build/windows/$ABI/libcoast_audio.a" prebuilt/windows/$ABI/libcoast_audio.a
+  cp "build/windows/$ABI/libcoast_audio.dll" prebuilt/windows/$ABI/libcoast_audio.dll
 
   rm -rf build/windows
 done

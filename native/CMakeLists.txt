@@ -8,10 +8,17 @@ if ("${OS}" STREQUAL "APPLE")
   set(CMAKE_C_FLAGS "-x objective-c")
 endif()
 
-if ("${SHARED}" STREQUAL "YES")
+# Always build as shared library for Windows
+if ("${OS}" STREQUAL "WIN32")
+  set(BUILD_SHARED_LIBS ON)
   add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+  set_target_properties(${PROJECT_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 else()
-  add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+  if ("${SHARED}" STREQUAL "YES")
+    add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+  else()
+    add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+  endif()
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE "miniaudio/extras/miniaudio_split")
@@ -40,7 +47,14 @@ elseif ("${OS}" STREQUAL "LINUX")
     LIBRARY DESTINATION .
   )
 elseif ("${OS}" STREQUAL "WIN32")
-  install (TARGETS ${PROJECT_NAME}
-          LIBRARY DESTINATION .
+  # Set C++ standard
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+  # Install rules
+  install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin  # This is for the .dll file
+    LIBRARY DESTINATION lib  # This is for .so files on Unix-like systems
+    ARCHIVE DESTINATION lib  # This is for the .lib file on Windows
   )
 endif()
