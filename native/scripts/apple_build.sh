@@ -30,10 +30,8 @@ rm -rf coast_audio.xcframework
 xcodebuild -create-xcframework \
   -framework "OS64/coast_audio.framework" \
   -framework "SIMULATORARM64/coast_audio.framework" \
-  -framework "SIMULATOR64/coast_audio.framework" \
   -framework "MAC_UNIVERSAL/coast_audio.framework" \
   -output "coast_audio.xcframework"
 
 cp -r ios.coast_audio_Privacy.bundle "coast_audio.xcframework/ios-arm64/coast_audio_Privacy.bundle"
 cp -r ios.coast_audio_Privacy.bundle "coast_audio.xcframework/ios-arm64-simulator/coast_audio_Privacy.bundle"
-cp -r ios.coast_audio_Privacy.bundle "coast_audio.xcframework/ios-x86_64-simulator/coast_audio_Privacy.bundle"
