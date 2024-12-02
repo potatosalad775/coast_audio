@@ -35,6 +35,8 @@ class CoastAudioNative {
       lib = DynamicLibrary.open('libcoast_audio.so');
     } else if (Platform.isLinux) {
       lib = DynamicLibrary.open('libcoast_audio.so');
+    } else if (Platform.isWindows) {
+      lib = DynamicLibrary.open('libcoast_audio.dll');
     } else {
       throw const CoastAudioNativeInitializationException.unsupportedPlatform();
     }

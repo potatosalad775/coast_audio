@@ -6,9 +6,9 @@
 	<array>
 		<dict>
 			<key>BinaryPath</key>
-			<string>coast_audio.framework/Versions/A/coast_audio</string>
+			<string>coast_audio.framework/coast_audio</string>
 			<key>LibraryIdentifier</key>
-			<string>macos-arm64</string>
+			<string>ios-arm64-simulator</string>
 			<key>LibraryPath</key>
 			<string>coast_audio.framework</string>
 			<key>SupportedArchitectures</key>
@@ -16,7 +16,9 @@
 				<string>arm64</string>
 			</array>
 			<key>SupportedPlatform</key>
-			<string>macos</string>
+			<string>ios</string>
+			<key>SupportedPlatformVariant</key>
+			<string>simulator</string>
 		</dict>
 		<dict>
 			<key>BinaryPath</key>
@@ -34,19 +36,18 @@
 		</dict>
 		<dict>
 			<key>BinaryPath</key>
-			<string>coast_audio.framework/coast_audio</string>
+			<string>coast_audio.framework/Versions/A/coast_audio</string>
 			<key>LibraryIdentifier</key>
-			<string>ios-arm64-simulator</string>
+			<string>macos-arm64_x86_64</string>
 			<key>LibraryPath</key>
 			<string>coast_audio.framework</string>
 			<key>SupportedArchitectures</key>
 			<array>
 				<string>arm64</string>
+				<string>x86_64</string>
 			</array>
 			<key>SupportedPlatform</key>
-			<string>ios</string>
-			<key>SupportedPlatformVariant</key>
-			<string>simulator</string>
+			<string>macos</string>
 		</dict>
 	</array>
 	<key>CFBundlePackageType</key>
