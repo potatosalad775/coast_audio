@@ -39,6 +39,16 @@ if ("${OS}" STREQUAL "APPLE")
   install(FILES ${HEADER_FILES} DESTINATION "prebuilt/apple/${PLATFORM}/coast_audio.framework/Headers")
   install(FILES "prebuilt/apple/module.modulemap" DESTINATION "prebuilt/apple/${PLATFORM}/coast_audio.framework/Modules")
 elseif ("${OS}" STREQUAL "ANDROID")
+  # Android-specific flags for 16KiB page-size compatibility
+  target_compile_definitions(${PROJECT_NAME} PRIVATE __BIONIC_NO_PAGE_SIZE_MACRO)
+  if (DEFINED ANDROID_ABI)
+    if (ANDROID_ABI STREQUAL "arm64-v8a" OR ANDROID_ABI STREQUAL "x86_64")
+      target_link_options(${PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
+    endif()
+  else()
+    # Fallback: apply when ABI not specified explicitly
+    target_link_options(${PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
+  endif()
   install (TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION .
   )
