@@ -1,0 +1,117 @@
+name: build_native
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Android NDK
+        run: echo "ANDROID_NDK=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+
+      - name: Build Android native libraries
+        working-directory: native
+        run: |
+          rm -rf build
+          chmod +x scripts/android_build.sh
+          ./scripts/android_build.sh
+
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-prebuilt
+          path: native/prebuilt/android/
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install cross-compilation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Build Linux native libraries
+        working-directory: native
+        run: |
+          rm -rf build
+          chmod +x scripts/linux_build.sh
+          ./scripts/linux_build.sh
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-prebuilt
+          path: native/prebuilt/linux/
+
+  build-apple:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Apple native libraries
+        working-directory: native
+        run: |
+          rm -rf build
+          chmod +x scripts/apple_build.sh
+          ./scripts/apple_build.sh
+
+      - name: Upload Apple artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: apple-prebuilt
+          path: native/prebuilt/apple/
+
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Windows native libraries
+        working-directory: native
+        run: |
+          rm -rf build
+          ABI=x86_64
+
+          mkdir -p build/windows/$ABI
+          cd build/windows/$ABI
+
+          cmake ../../.. \
+            -G "MinGW Makefiles" \
+            -DCMAKE_INSTALL_PREFIX="../../../build/windows/$ABI" \
+            -DOS=WIN32 \
+            -DCMAKE_C_FLAGS='-DMAB_WIN32' \
+            -DCMAKE_CXX_FLAGS='-DMAB_WIN32' \
+            -DBUILD_SHARED_LIBS=ON
+
+          cmake --build . --config Release
+          cmake --install . --config Release
+
+          cd ../../..
+          mkdir -p prebuilt/windows/$ABI
+          cp "build/windows/$ABI/bin/libcoast_audio.dll" prebuilt/windows/$ABI/libcoast_audio.dll
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-prebuilt
+          path: native/prebuilt/windows/
