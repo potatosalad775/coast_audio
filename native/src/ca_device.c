@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 #include <stdio.h>
 #include "ca_device.h"
 #include "ca_defs.h"
