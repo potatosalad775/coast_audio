@@ -34,6 +34,7 @@ ffigen:
       - "native/src/ca_context.h"
       - "native/src/ca_device.h"
       - "native/src/ca_log.h"
+      - "native/src/ca_aac.h"
       - "native/miniaudio/extras/miniaudio_split/miniaudio.h"
   functions:
     include:
