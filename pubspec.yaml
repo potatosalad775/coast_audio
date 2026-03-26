@@ -50,6 +50,7 @@ ffigen:
       exclude:
         - "ma_encoder_.*"
         - "ma_decoder_.*"
+        - "ca_aac_decoder_.*"
   structs:
     include:
       - "ca_.*"

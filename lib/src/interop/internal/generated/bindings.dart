@@ -162,7 +162,7 @@ class NativeBindings {
     ffi.Pointer<ma_log> pLog,
     int level,
     ffi.Pointer<ffi.Char> pFormat,
-    ffi.Pointer<__va_list_tag> args,
+    va_list args,
   ) {
     return _ma_log_postv(
       pLog,
@@ -174,14 +174,11 @@ class NativeBindings {
 
   late final _ma_log_postvPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int32 Function(
-              ffi.Pointer<ma_log>,
-              ma_uint32,
-              ffi.Pointer<ffi.Char>,
-              ffi.Pointer<__va_list_tag>)>>('ma_log_postv');
+          ffi.Int32 Function(ffi.Pointer<ma_log>, ma_uint32,
+              ffi.Pointer<ffi.Char>, va_list)>>('ma_log_postv');
   late final _ma_log_postv = _ma_log_postvPtr.asFunction<
       int Function(ffi.Pointer<ma_log>, int, ffi.Pointer<ffi.Char>,
-          ffi.Pointer<__va_list_tag>)>(isLeaf: true);
+          va_list)>(isLeaf: true);
 
   int ma_log_postf(
     ffi.Pointer<ma_log> pLog,
@@ -18777,7 +18774,7 @@ class NativeBindings {
   late final _ca_aac_decoder_sizeofPtr =
       _lookup<ffi.NativeFunction<ffi.Size Function()>>('ca_aac_decoder_sizeof');
   late final _ca_aac_decoder_sizeof =
-      _ca_aac_decoder_sizeofPtr.asFunction<int Function()>(isLeaf: true);
+      _ca_aac_decoder_sizeofPtr.asFunction<int Function()>();
 
   int ca_aac_decoder_init(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18799,7 +18796,7 @@ class NativeBindings {
               ca_aac_seek_proc, ffi.Pointer<ffi.Void>)>>('ca_aac_decoder_init');
   late final _ca_aac_decoder_init = _ca_aac_decoder_initPtr.asFunction<
       int Function(ffi.Pointer<ca_aac_decoder>, ca_aac_read_proc,
-          ca_aac_seek_proc, ffi.Pointer<ffi.Void>)>(isLeaf: true);
+          ca_aac_seek_proc, ffi.Pointer<ffi.Void>)>();
 
   void ca_aac_decoder_uninit(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18813,7 +18810,7 @@ class NativeBindings {
           ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ca_aac_decoder>)>>(
       'ca_aac_decoder_uninit');
   late final _ca_aac_decoder_uninit = _ca_aac_decoder_uninitPtr
-      .asFunction<void Function(ffi.Pointer<ca_aac_decoder>)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ca_aac_decoder>)>();
 
   ca_aac_format ca_aac_decoder_get_format(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18828,8 +18825,7 @@ class NativeBindings {
           .NativeFunction<ca_aac_format Function(ffi.Pointer<ca_aac_decoder>)>>(
       'ca_aac_decoder_get_format');
   late final _ca_aac_decoder_get_format = _ca_aac_decoder_get_formatPtr
-      .asFunction<ca_aac_format Function(ffi.Pointer<ca_aac_decoder>)>(
-          isLeaf: true);
+      .asFunction<ca_aac_format Function(ffi.Pointer<ca_aac_decoder>)>();
 
   int ca_aac_decoder_get_length_in_pcm_frames(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18848,8 +18844,7 @@ class NativeBindings {
       'ca_aac_decoder_get_length_in_pcm_frames');
   late final _ca_aac_decoder_get_length_in_pcm_frames =
       _ca_aac_decoder_get_length_in_pcm_framesPtr.asFunction<
-          int Function(ffi.Pointer<ca_aac_decoder>,
-              ffi.Pointer<ffi.Int64>)>(isLeaf: true);
+          int Function(ffi.Pointer<ca_aac_decoder>, ffi.Pointer<ffi.Int64>)>();
 
   int ca_aac_decoder_get_cursor_in_pcm_frames(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18868,8 +18863,7 @@ class NativeBindings {
       'ca_aac_decoder_get_cursor_in_pcm_frames');
   late final _ca_aac_decoder_get_cursor_in_pcm_frames =
       _ca_aac_decoder_get_cursor_in_pcm_framesPtr.asFunction<
-          int Function(ffi.Pointer<ca_aac_decoder>,
-              ffi.Pointer<ffi.Int64>)>(isLeaf: true);
+          int Function(ffi.Pointer<ca_aac_decoder>, ffi.Pointer<ffi.Int64>)>();
 
   int ca_aac_decoder_seek_to_pcm_frame(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18887,8 +18881,7 @@ class NativeBindings {
               ffi.Int64)>>('ca_aac_decoder_seek_to_pcm_frame');
   late final _ca_aac_decoder_seek_to_pcm_frame =
       _ca_aac_decoder_seek_to_pcm_framePtr
-          .asFunction<int Function(ffi.Pointer<ca_aac_decoder>, int)>(
-              isLeaf: true);
+          .asFunction<int Function(ffi.Pointer<ca_aac_decoder>, int)>();
 
   int ca_aac_decoder_read_pcm_frames(
     ffi.Pointer<ca_aac_decoder> pDecoder,
@@ -18914,7 +18907,7 @@ class NativeBindings {
   late final _ca_aac_decoder_read_pcm_frames =
       _ca_aac_decoder_read_pcm_framesPtr.asFunction<
           int Function(ffi.Pointer<ca_aac_decoder>, ffi.Pointer<ffi.Void>, int,
-              ffi.Pointer<ffi.Int64>)>(isLeaf: true);
+              ffi.Pointer<ffi.Int64>)>();
 }
 
 abstract class ma_log_level {
@@ -19199,48 +19192,15 @@ final class ma_allocation_callbacks extends ffi.Struct {
 
 typedef ma_mutex = ma_pthread_mutex_t;
 typedef ma_pthread_mutex_t = pthread_mutex_t;
+typedef pthread_mutex_t = __darwin_pthread_mutex_t;
+typedef __darwin_pthread_mutex_t = _opaque_pthread_mutex_t;
 
-final class pthread_mutex_t extends ffi.Union {
-  external __pthread_mutex_s _data;
-
-  @ffi.Array.multi([40])
-  external ffi.Array<ffi.Char> _size;
-
+final class _opaque_pthread_mutex_t extends ffi.Struct {
   @ffi.Long()
-  external int _align;
-}
+  external int _sig;
 
-final class __pthread_mutex_s extends ffi.Struct {
-  @ffi.Int()
-  external int _lock;
-
-  @ffi.UnsignedInt()
-  external int _count;
-
-  @ffi.Int()
-  external int _owner;
-
-  @ffi.UnsignedInt()
-  external int _nusers;
-
-  @ffi.Int()
-  external int _kind;
-
-  @ffi.Short()
-  external int _spins;
-
-  @ffi.Short()
-  external int _elision;
-
-  external __pthread_list_t _list;
-}
-
-typedef __pthread_list_t = __pthread_internal_list;
-
-final class __pthread_internal_list extends ffi.Struct {
-  external ffi.Pointer<__pthread_internal_list> _prev;
-
-  external ffi.Pointer<__pthread_internal_list> _next;
+  @ffi.Array.multi([56])
+  external ffi.Array<ffi.Char> _opaque;
 }
 
 abstract class ma_thread_priority {
@@ -19453,8 +19413,7 @@ final class ma_device extends ffi.Struct {
 
   external ma_event stopEvent;
 
-  @ma_thread()
-  external int thread;
+  external ma_thread thread;
 
   @ffi.Int32()
   external int workResult;
@@ -19478,11 +19437,11 @@ final class ma_device extends ffi.Struct {
 
   external ma_duplex_rb duplexRB;
 
-  external UnnamedStruct11 resampling;
+  external UnnamedStruct10 resampling;
 
-  external UnnamedStruct14 playback;
+  external UnnamedStruct13 playback;
 
-  external UnnamedStruct15 capture;
+  external UnnamedStruct14 capture;
 
   external UnnamedUnion7 unnamed;
 }
@@ -19583,57 +19542,42 @@ final class ma_event extends ffi.Struct {
 }
 
 typedef ma_pthread_cond_t = pthread_cond_t;
+typedef pthread_cond_t = __darwin_pthread_cond_t;
+typedef __darwin_pthread_cond_t = _opaque_pthread_cond_t;
 
-final class pthread_cond_t extends ffi.Union {
-  external __pthread_cond_s _data;
+final class _opaque_pthread_cond_t extends ffi.Struct {
+  @ffi.Long()
+  external int _sig;
 
-  @ffi.Array.multi([48])
-  external ffi.Array<ffi.Char> _size;
-
-  @ffi.LongLong()
-  external int _align;
-}
-
-final class __pthread_cond_s extends ffi.Struct {
-  external __atomic_wide_counter _wseq;
-
-  external __atomic_wide_counter _g1_start;
-
-  @ffi.Array.multi([2])
-  external ffi.Array<ffi.UnsignedInt> _g_refs;
-
-  @ffi.Array.multi([2])
-  external ffi.Array<ffi.UnsignedInt> _g_size;
-
-  @ffi.UnsignedInt()
-  external int _g1_orig_size;
-
-  @ffi.UnsignedInt()
-  external int _wrefs;
-
-  @ffi.Array.multi([2])
-  external ffi.Array<ffi.UnsignedInt> _g_signals;
-}
-
-final class __atomic_wide_counter extends ffi.Union {
-  @ffi.UnsignedLongLong()
-  external int _value64;
-
-  external UnnamedStruct10 _value32;
-}
-
-final class UnnamedStruct10 extends ffi.Struct {
-  @ffi.UnsignedInt()
-  external int _low;
-
-  @ffi.UnsignedInt()
-  external int _high;
+  @ffi.Array.multi([40])
+  external ffi.Array<ffi.Char> _opaque;
 }
 
 typedef ma_thread = ma_pthread_t;
 typedef ma_pthread_t = pthread_t;
-typedef pthread_t = ffi.UnsignedLong;
-typedef Dartpthread_t = int;
+typedef pthread_t = __darwin_pthread_t;
+typedef __darwin_pthread_t = ffi.Pointer<_opaque_pthread_t>;
+
+final class _opaque_pthread_t extends ffi.Struct {
+  @ffi.Long()
+  external int _sig;
+
+  external ffi.Pointer<__darwin_pthread_handler_rec> _cleanup_stack;
+
+  @ffi.Array.multi([8176])
+  external ffi.Array<ffi.Char> _opaque;
+}
+
+final class __darwin_pthread_handler_rec extends ffi.Struct {
+  external ffi
+      .Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>
+      _routine;
+
+  external ffi.Pointer<ffi.Void> _arg;
+
+  external ffi.Pointer<__darwin_pthread_handler_rec> _next;
+}
+
 typedef ma_bool8 = ma_uint8;
 
 final class ma_atomic_float extends ffi.Struct {
@@ -19770,7 +19714,7 @@ final class ma_rb extends ffi.Struct {
   external ma_allocation_callbacks allocationCallbacks;
 }
 
-final class UnnamedStruct11 extends ffi.Struct {
+final class UnnamedStruct10 extends ffi.Struct {
   @ffi.Int32()
   external int algorithm;
 
@@ -19778,7 +19722,7 @@ final class UnnamedStruct11 extends ffi.Struct {
 
   external ffi.Pointer<ffi.Void> pBackendUserData;
 
-  external UnnamedStruct13 linear;
+  external UnnamedStruct12 linear;
 }
 
 abstract class ma_resample_algorithm {
@@ -19883,10 +19827,10 @@ final class ma_resampler_config extends ffi.Struct {
 
   external ffi.Pointer<ffi.Void> pBackendUserData;
 
-  external UnnamedStruct12 linear;
+  external UnnamedStruct11 linear;
 }
 
-final class UnnamedStruct12 extends ffi.Struct {
+final class UnnamedStruct11 extends ffi.Struct {
   @ma_uint32()
   external int lpfOrder;
 }
@@ -19894,12 +19838,12 @@ final class UnnamedStruct12 extends ffi.Struct {
 typedef ma_resampling_backend = ffi.Void;
 typedef Dartma_resampling_backend = void;
 
-final class UnnamedStruct13 extends ffi.Struct {
+final class UnnamedStruct12 extends ffi.Struct {
   @ma_uint32()
   external int lpfOrder;
 }
 
-final class UnnamedStruct14 extends ffi.Struct {
+final class UnnamedStruct13 extends ffi.Struct {
   external ffi.Pointer<ma_device_id> pID;
 
   external ma_device_id id;
@@ -20265,7 +20209,7 @@ final class ma_biquad extends ffi.Struct {
   external int ownsHeap;
 }
 
-final class UnnamedStruct15 extends ffi.Struct {
+final class UnnamedStruct14 extends ffi.Struct {
   external ffi.Pointer<ma_device_id> pID;
 
   external ma_device_id id;
@@ -20321,70 +20265,65 @@ final class UnnamedStruct15 extends ffi.Struct {
 }
 
 final class UnnamedUnion7 extends ffi.Union {
-  external UnnamedStruct16 alsa;
+  external UnnamedStruct15 coreaudio;
 
-  external UnnamedStruct17 pulse;
-
-  external UnnamedStruct18 jack;
-
-  external UnnamedStruct19 null_device;
+  external UnnamedStruct16 null_device;
 }
 
-final class UnnamedStruct16 extends ffi.Struct {
-  external ma_ptr pPCMPlayback;
+final class UnnamedStruct15 extends ffi.Struct {
+  @ma_uint32()
+  external int deviceObjectIDPlayback;
 
-  external ma_ptr pPCMCapture;
+  @ma_uint32()
+  external int deviceObjectIDCapture;
 
-  external ffi.Pointer<ffi.Void> pPollDescriptorsPlayback;
+  external ma_ptr audioUnitPlayback;
 
-  external ffi.Pointer<ffi.Void> pPollDescriptorsCapture;
+  external ma_ptr audioUnitCapture;
 
-  @ffi.Int()
-  external int pollDescriptorCountPlayback;
+  external ma_ptr pAudioBufferList;
 
-  @ffi.Int()
-  external int pollDescriptorCountCapture;
+  @ma_uint32()
+  external int audioBufferCapInFrames;
 
-  @ffi.Int()
-  external int wakeupfdPlayback;
+  external ma_event stopEvent;
 
-  @ffi.Int()
-  external int wakeupfdCapture;
+  @ma_uint32()
+  external int originalPeriodSizeInFrames;
 
-  @ma_bool8()
-  external int isUsingMMapPlayback;
+  @ma_uint32()
+  external int originalPeriodSizeInMilliseconds;
 
-  @ma_bool8()
-  external int isUsingMMapCapture;
+  @ma_uint32()
+  external int originalPeriods;
+
+  @ffi.Int32()
+  external int originalPerformanceProfile;
+
+  @ma_bool32()
+  external int isDefaultPlaybackDevice;
+
+  @ma_bool32()
+  external int isDefaultCaptureDevice;
+
+  @ma_bool32()
+  external int isSwitchingPlaybackDevice;
+
+  @ma_bool32()
+  external int isSwitchingCaptureDevice;
+
+  external ffi.Pointer<ffi.Void> pNotificationHandler;
 }
 
 typedef ma_ptr = ffi.Pointer<ffi.Void>;
 
-final class UnnamedStruct17 extends ffi.Struct {
-  external ma_ptr pMainLoop;
-
-  external ma_ptr pPulseContext;
-
-  external ma_ptr pStreamPlayback;
-
-  external ma_ptr pStreamCapture;
+abstract class ma_performance_profile {
+  static const int ma_performance_profile_low_latency = 0;
+  static const int ma_performance_profile_conservative = 1;
 }
 
-final class UnnamedStruct18 extends ffi.Struct {
-  external ma_ptr pClient;
-
-  external ffi.Pointer<ma_ptr> ppPortsPlayback;
-
-  external ffi.Pointer<ma_ptr> ppPortsCapture;
-
-  external ffi.Pointer<ffi.Float> pIntermediaryBufferPlayback;
-
-  external ffi.Pointer<ffi.Float> pIntermediaryBufferCapture;
-}
-
-final class UnnamedStruct19 extends ffi.Struct {
-  @ma_thread()
-  external int deviceThread;
+final class UnnamedStruct16 extends ffi.Struct {
+  external ma_thread deviceThread;
 
   external ma_event operationEvent;
 
@@ -20484,29 +20423,24 @@ final class ma_device_config extends ffi.Struct {
 
   external ma_resampler_config resampling;
 
-  external UnnamedStruct20 playback;
+  external UnnamedStruct17 playback;
 
-  external UnnamedStruct21 capture;
+  external UnnamedStruct18 capture;
 
-  external UnnamedStruct22 wasapi;
+  external UnnamedStruct19 wasapi;
 
-  external UnnamedStruct23 alsa;
+  external UnnamedStruct20 alsa;
 
-  external UnnamedStruct24 pulse;
+  external UnnamedStruct21 pulse;
 
-  external UnnamedStruct25 coreaudio;
+  external UnnamedStruct22 coreaudio;
 
-  external UnnamedStruct26 opensl;
+  external UnnamedStruct23 opensl;
 
-  external UnnamedStruct27 aaudio;
+  external UnnamedStruct24 aaudio;
 }
 
-abstract class ma_performance_profile {
-  static const int ma_performance_profile_low_latency = 0;
-  static const int ma_performance_profile_conservative = 1;
-}
-
-final class UnnamedStruct20 extends ffi.Struct {
+final class UnnamedStruct17 extends ffi.Struct {
   external ffi.Pointer<ma_device_id> pDeviceID;
 
   @ffi.Int32()
@@ -20527,7 +20461,7 @@ final class UnnamedStruct20 extends ffi.Struct {
   external int shareMode;
 }
 
-final class UnnamedStruct21 extends ffi.Struct {
+final class UnnamedStruct18 extends ffi.Struct {
   external ffi.Pointer<ma_device_id> pDeviceID;
 
   @ffi.Int32()
@@ -20548,7 +20482,7 @@ final class UnnamedStruct21 extends ffi.Struct {
   external int shareMode;
 }
 
-final class UnnamedStruct22 extends ffi.Struct {
+final class UnnamedStruct19 extends ffi.Struct {
   @ffi.Int32()
   external int usage;
 
@@ -20577,7 +20511,7 @@ abstract class ma_wasapi_usage {
   static const int ma_wasapi_usage_pro_audio = 2;
 }
 
-final class UnnamedStruct23 extends ffi.Struct {
+final class UnnamedStruct20 extends ffi.Struct {
   @ma_bool32()
   external int noMMap;
 
@@ -20591,18 +20525,18 @@ final class UnnamedStruct23 extends ffi.Struct {
   external int noAutoResample;
 }
 
-final class UnnamedStruct24 extends ffi.Struct {
+final class UnnamedStruct21 extends ffi.Struct {
   external ffi.Pointer<ffi.Char> pStreamNamePlayback;
 
   external ffi.Pointer<ffi.Char> pStreamNameCapture;
 }
 
-final class UnnamedStruct25 extends ffi.Struct {
+final class UnnamedStruct22 extends ffi.Struct {
   @ma_bool32()
   external int allowNominalSampleRateChange;
 }
 
-final class UnnamedStruct26 extends ffi.Struct {
+final class UnnamedStruct23 extends ffi.Struct {
   @ffi.Int32()
   external int streamType;
 
@@ -20632,7 +20566,7 @@ abstract class ma_opensl_recording_preset {
   static const int ma_opensl_recording_preset_voice_unprocessed = 5;
 }
 
-final class UnnamedStruct27 extends ffi.Struct {
+final class UnnamedStruct24 extends ffi.Struct {
   @ffi.Int32()
   external int usage;
 
@@ -20744,154 +20678,58 @@ abstract class ma_backend {
 }
 
 final class UnnamedUnion8 extends ffi.Union {
-  external UnnamedStruct28 alsa;
+  external UnnamedStruct25 coreaudio;
 
-  external UnnamedStruct29 pulse;
-
-  external UnnamedStruct30 jack;
-
-  external UnnamedStruct31 null_backend;
+  external UnnamedStruct26 null_backend;
 }
 
-final class UnnamedStruct28 extends ffi.Struct {
-  external ma_handle asoundSO;
+final class UnnamedStruct25 extends ffi.Struct {
+  external ma_handle hCoreFoundation;
 
-  external ma_proc snd_pcm_open;
+  external ma_proc CFStringGetCString;
 
-  external ma_proc snd_pcm_close;
+  external ma_proc CFRelease;
 
-  external ma_proc snd_pcm_hw_params_sizeof;
+  external ma_handle hCoreAudio;
 
-  external ma_proc snd_pcm_hw_params_any;
+  external ma_proc AudioObjectGetPropertyData;
 
-  external ma_proc snd_pcm_hw_params_set_format;
+  external ma_proc AudioObjectGetPropertyDataSize;
 
-  external ma_proc snd_pcm_hw_params_set_format_first;
+  external ma_proc AudioObjectSetPropertyData;
 
-  external ma_proc snd_pcm_hw_params_get_format_mask;
+  external ma_proc AudioObjectAddPropertyListener;
 
-  external ma_proc snd_pcm_hw_params_set_channels;
+  external ma_proc AudioObjectRemovePropertyListener;
 
-  external ma_proc snd_pcm_hw_params_set_channels_near;
+  external ma_handle hAudioUnit;
 
-  external ma_proc snd_pcm_hw_params_set_channels_minmax;
+  external ma_proc AudioComponentFindNext;
 
-  external ma_proc snd_pcm_hw_params_set_rate_resample;
+  external ma_proc AudioComponentInstanceDispose;
 
-  external ma_proc snd_pcm_hw_params_set_rate;
+  external ma_proc AudioComponentInstanceNew;
 
-  external ma_proc snd_pcm_hw_params_set_rate_near;
+  external ma_proc AudioOutputUnitStart;
 
-  external ma_proc snd_pcm_hw_params_set_buffer_size_near;
+  external ma_proc AudioOutputUnitStop;
 
-  external ma_proc snd_pcm_hw_params_set_periods_near;
+  external ma_proc AudioUnitAddPropertyListener;
 
-  external ma_proc snd_pcm_hw_params_set_access;
+  external ma_proc AudioUnitGetPropertyInfo;
 
-  external ma_proc snd_pcm_hw_params_get_format;
+  external ma_proc AudioUnitGetProperty;
 
-  external ma_proc snd_pcm_hw_params_get_channels;
+  external ma_proc AudioUnitSetProperty;
 
-  external ma_proc snd_pcm_hw_params_get_channels_min;
+  external ma_proc AudioUnitInitialize;
 
-  external ma_proc snd_pcm_hw_params_get_channels_max;
+  external ma_proc AudioUnitRender;
 
-  external ma_proc snd_pcm_hw_params_get_rate;
-
-  external ma_proc snd_pcm_hw_params_get_rate_min;
-
-  external ma_proc snd_pcm_hw_params_get_rate_max;
-
-  external ma_proc snd_pcm_hw_params_get_buffer_size;
-
-  external ma_proc snd_pcm_hw_params_get_periods;
-
-  external ma_proc snd_pcm_hw_params_get_access;
-
-  external ma_proc snd_pcm_hw_params_test_format;
-
-  external ma_proc snd_pcm_hw_params_test_channels;
-
-  external ma_proc snd_pcm_hw_params_test_rate;
-
-  external ma_proc snd_pcm_hw_params;
-
-  external ma_proc snd_pcm_sw_params_sizeof;
-
-  external ma_proc snd_pcm_sw_params_current;
-
-  external ma_proc snd_pcm_sw_params_get_boundary;
-
-  external ma_proc snd_pcm_sw_params_set_avail_min;
-
-  external ma_proc snd_pcm_sw_params_set_start_threshold;
-
-  external ma_proc snd_pcm_sw_params_set_stop_threshold;
-
-  external ma_proc snd_pcm_sw_params;
-
-  external ma_proc snd_pcm_format_mask_sizeof;
-
-  external ma_proc snd_pcm_format_mask_test;
-
-  external ma_proc snd_pcm_get_chmap;
-
-  external ma_proc snd_pcm_state;
-
-  external ma_proc snd_pcm_prepare;
-
-  external ma_proc snd_pcm_start;
-
-  external ma_proc snd_pcm_drop;
-
-  external ma_proc snd_pcm_drain;
-
-  external ma_proc snd_pcm_reset;
-
-  external ma_proc snd_device_name_hint;
-
-  external ma_proc snd_device_name_get_hint;
-
-  external ma_proc snd_card_get_index;
-
-  external ma_proc snd_device_name_free_hint;
-
-  external ma_proc snd_pcm_mmap_begin;
-
-  external ma_proc snd_pcm_mmap_commit;
-
-  external ma_proc snd_pcm_recover;
-
-  external ma_proc snd_pcm_readi;
-
-  external ma_proc snd_pcm_writei;
-
-  external ma_proc snd_pcm_avail;
-
-  external ma_proc snd_pcm_avail_update;
-
-  external ma_proc snd_pcm_wait;
-
-  external ma_proc snd_pcm_nonblock;
-
-  external ma_proc snd_pcm_info;
-
-  external ma_proc snd_pcm_info_sizeof;
-
-  external ma_proc snd_pcm_info_get_name;
-
-  external ma_proc snd_pcm_poll_descriptors;
-
-  external ma_proc snd_pcm_poll_descriptors_count;
-
-  external ma_proc snd_pcm_poll_descriptors_revents;
-
-  external ma_proc snd_config_update_free_global;
-
-  external ma_mutex internalDeviceEnumLock;
+  external ma_ptr component;
 
   @ma_bool32()
-  external int useVerboseDeviceEnumeration;
+  external int noAudioSessionDeactivate;
 }
 
 typedef ma_handle = ffi.Pointer<ffi.Void>;
@@ -20899,194 +20737,19 @@ typedef ma_proc = ffi.Pointer<ffi.NativeFunction<ma_procFunction>>;
 typedef ma_procFunction = ffi.Void Function();
 typedef Dartma_procFunction = void Function();
 
-final class UnnamedStruct29 extends ffi.Struct {
-  external ma_handle pulseSO;
-
-  external ma_proc pa_mainloop_new;
-
-  external ma_proc pa_mainloop_free;
-
-  external ma_proc pa_mainloop_quit;
-
-  external ma_proc pa_mainloop_get_api;
-
-  external ma_proc pa_mainloop_iterate;
-
-  external ma_proc pa_mainloop_wakeup;
-
-  external ma_proc pa_threaded_mainloop_new;
-
-  external ma_proc pa_threaded_mainloop_free;
-
-  external ma_proc pa_threaded_mainloop_start;
-
-  external ma_proc pa_threaded_mainloop_stop;
-
-  external ma_proc pa_threaded_mainloop_lock;
-
-  external ma_proc pa_threaded_mainloop_unlock;
-
-  external ma_proc pa_threaded_mainloop_wait;
-
-  external ma_proc pa_threaded_mainloop_signal;
-
-  external ma_proc pa_threaded_mainloop_accept;
-
-  external ma_proc pa_threaded_mainloop_get_retval;
-
-  external ma_proc pa_threaded_mainloop_get_api;
-
-  external ma_proc pa_threaded_mainloop_in_thread;
-
-  external ma_proc pa_threaded_mainloop_set_name;
-
-  external ma_proc pa_context_new;
-
-  external ma_proc pa_context_unref;
-
-  external ma_proc pa_context_connect;
-
-  external ma_proc pa_context_disconnect;
-
-  external ma_proc pa_context_set_state_callback;
-
-  external ma_proc pa_context_get_state;
-
-  external ma_proc pa_context_get_sink_info_list;
-
-  external ma_proc pa_context_get_source_info_list;
-
-  external ma_proc pa_context_get_sink_info_by_name;
-
-  external ma_proc pa_context_get_source_info_by_name;
-
-  external ma_proc pa_operation_unref;
-
-  external ma_proc pa_operation_get_state;
-
-  external ma_proc pa_channel_map_init_extend;
-
-  external ma_proc pa_channel_map_valid;
-
-  external ma_proc pa_channel_map_compatible;
-
-  external ma_proc pa_stream_new;
-
-  external ma_proc pa_stream_unref;
-
-  external ma_proc pa_stream_connect_playback;
-
-  external ma_proc pa_stream_connect_record;
-
-  external ma_proc pa_stream_disconnect;
-
-  external ma_proc pa_stream_get_state;
-
-  external ma_proc pa_stream_get_sample_spec;
-
-  external ma_proc pa_stream_get_channel_map;
-
-  external ma_proc pa_stream_get_buffer_attr;
-
-  external ma_proc pa_stream_set_buffer_attr;
-
-  external ma_proc pa_stream_get_device_name;
-
-  external ma_proc pa_stream_set_write_callback;
-
-  external ma_proc pa_stream_set_read_callback;
-
-  external ma_proc pa_stream_set_suspended_callback;
-
-  external ma_proc pa_stream_set_moved_callback;
-
-  external ma_proc pa_stream_is_suspended;
-
-  external ma_proc pa_stream_flush;
-
-  external ma_proc pa_stream_drain;
-
-  external ma_proc pa_stream_is_corked;
-
-  external ma_proc pa_stream_cork;
-
-  external ma_proc pa_stream_trigger;
-
-  external ma_proc pa_stream_begin_write;
-
-  external ma_proc pa_stream_write;
-
-  external ma_proc pa_stream_peek;
-
-  external ma_proc pa_stream_drop;
-
-  external ma_proc pa_stream_writable_size;
-
-  external ma_proc pa_stream_readable_size;
-
-  external ma_ptr pMainLoop;
-
-  external ma_ptr pPulseContext;
-
-  external ffi.Pointer<ffi.Char> pApplicationName;
-
-  external ffi.Pointer<ffi.Char> pServerName;
-}
-
-final class UnnamedStruct30 extends ffi.Struct {
-  external ma_handle jackSO;
-
-  external ma_proc jack_client_open;
-
-  external ma_proc jack_client_close;
-
-  external ma_proc jack_client_name_size;
-
-  external ma_proc jack_set_process_callback;
-
-  external ma_proc jack_set_buffer_size_callback;
-
-  external ma_proc jack_on_shutdown;
-
-  external ma_proc jack_get_sample_rate;
-
-  external ma_proc jack_get_buffer_size;
-
-  external ma_proc jack_get_ports;
-
-  external ma_proc jack_activate;
-
-  external ma_proc jack_deactivate;
-
-  external ma_proc jack_connect;
-
-  external ma_proc jack_port_register;
-
-  external ma_proc jack_port_name;
-
-  external ma_proc jack_port_get_buffer;
-
-  external ma_proc jack_free;
-
-  external ffi.Pointer<ffi.Char> pClientName;
-
-  @ma_bool32()
-  external int tryStartServer;
-}
-
-final class UnnamedStruct31 extends ffi.Struct {
+final class UnnamedStruct26 extends ffi.Struct {
   @ffi.Int()
   external int unused;
 }
 
 final class UnnamedUnion9 extends ffi.Union {
-  external UnnamedStruct32 posix;
+  external UnnamedStruct27 posix;
 
   @ffi.Int()
   external int unused;
 }
 
-final class UnnamedStruct32 extends ffi.Struct {
+final class UnnamedStruct27 extends ffi.Struct {
   @ffi.Int()
   external int unused;
 }
@@ -21152,17 +20815,8 @@ final class ma_atomic_uint64 extends ffi.Struct {
   external int value;
 }
 
-final class __va_list_tag extends ffi.Struct {
-  @ffi.UnsignedInt()
-  external int gp_offset;
-
-  @ffi.UnsignedInt()
-  external int fp_offset;
-
-  external ffi.Pointer<ffi.Void> overflow_arg_area;
-
-  external ffi.Pointer<ffi.Void> reg_save_area;
-}
+typedef va_list = __builtin_va_list;
+typedef __builtin_va_list = ffi.Pointer<ffi.Char>;
 
 final class ma_biquad_config extends ffi.Struct {
   @ffi.Int32()
@@ -22033,13 +21687,13 @@ final class ma_job extends ffi.Struct {
 }
 
 final class UnnamedUnion10 extends ffi.Union {
-  external UnnamedStruct33 breakup;
+  external UnnamedStruct28 breakup;
 
   @ma_uint64()
   external int allocation;
 }
 
-final class UnnamedStruct33 extends ffi.Struct {
+final class UnnamedStruct28 extends ffi.Struct {
   @ma_uint16()
   external int code;
 
@@ -22051,14 +21705,14 @@ final class UnnamedStruct33 extends ffi.Struct {
 }
 
 final class UnnamedUnion11 extends ffi.Union {
-  external UnnamedStruct34 custom;
+  external UnnamedStruct29 custom;
 
   external UnnamedUnion12 resourceManager;
 
   external UnnamedUnion13 device;
 }
 
-final class UnnamedStruct34 extends ffi.Struct {
+final class UnnamedStruct29 extends ffi.Struct {
   external ma_job_proc proc;
 
   @ma_uintptr()
@@ -22074,26 +21728,26 @@ typedef Dartma_job_procFunction = int Function(ffi.Pointer<ma_job> pJob);
 typedef ma_uintptr = ma_uint64;
 
 final class UnnamedUnion12 extends ffi.Union {
-  external UnnamedStruct35 loadDataBufferNode;
+  external UnnamedStruct30 loadDataBufferNode;
 
-  external UnnamedStruct36 freeDataBufferNode;
+  external UnnamedStruct31 freeDataBufferNode;
 
-  external UnnamedStruct37 pageDataBufferNode;
+  external UnnamedStruct32 pageDataBufferNode;
 
-  external UnnamedStruct38 loadDataBuffer;
+  external UnnamedStruct33 loadDataBuffer;
 
-  external UnnamedStruct39 freeDataBuffer;
+  external UnnamedStruct34 freeDataBuffer;
 
-  external UnnamedStruct40 loadDataStream;
+  external UnnamedStruct35 loadDataStream;
 
-  external UnnamedStruct41 freeDataStream;
+  external UnnamedStruct36 freeDataStream;
 
-  external UnnamedStruct42 pageDataStream;
+  external UnnamedStruct37 pageDataStream;
 
-  external UnnamedStruct43 seekDataStream;
+  external UnnamedStruct38 seekDataStream;
 }
 
-final class UnnamedStruct35 extends ffi.Struct {
+final class UnnamedStruct30 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pResourceManager;
 
   external ffi.Pointer<ffi.Void> pDataBufferNode;
@@ -22114,7 +21768,7 @@ final class UnnamedStruct35 extends ffi.Struct {
   external ffi.Pointer<ma_fence> pDoneFence;
 }
 
-final class UnnamedStruct36 extends ffi.Struct {
+final class UnnamedStruct31 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pResourceManager;
 
   external ffi.Pointer<ffi.Void> pDataBufferNode;
@@ -22124,7 +21778,7 @@ final class UnnamedStruct36 extends ffi.Struct {
   external ffi.Pointer<ma_fence> pDoneFence;
 }
 
-final class UnnamedStruct37 extends ffi.Struct {
+final class UnnamedStruct32 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pResourceManager;
 
   external ffi.Pointer<ffi.Void> pDataBufferNode;
@@ -22136,7 +21790,7 @@ final class UnnamedStruct37 extends ffi.Struct {
   external ffi.Pointer<ma_fence> pDoneFence;
 }
 
-final class UnnamedStruct38 extends ffi.Struct {
+final class UnnamedStruct33 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDataBuffer;
 
   external ffi.Pointer<ma_async_notification> pInitNotification;
@@ -22163,7 +21817,7 @@ final class UnnamedStruct38 extends ffi.Struct {
   external int isLooping;
 }
 
-final class UnnamedStruct39 extends ffi.Struct {
+final class UnnamedStruct34 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDataBuffer;
 
   external ffi.Pointer<ma_async_notification> pDoneNotification;
@@ -22171,7 +21825,7 @@ final class UnnamedStruct39 extends ffi.Struct {
   external ffi.Pointer<ma_fence> pDoneFence;
 }
 
-final class UnnamedStruct40 extends ffi.Struct {
+final class UnnamedStruct35 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDataStream;
 
   external ffi.Pointer<ffi.Char> pFilePath;
@@ -22186,7 +21840,7 @@ final class UnnamedStruct40 extends ffi.Struct {
   external ffi.Pointer<ma_fence> pInitFence;
 }
 
-final class UnnamedStruct41 extends ffi.Struct {
+final class UnnamedStruct36 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDataStream;
 
   external ffi.Pointer<ma_async_notification> pDoneNotification;
@@ -22194,14 +21848,14 @@ final class UnnamedStruct41 extends ffi.Struct {
   external ffi.Pointer<ma_fence> pDoneFence;
 }
 
-final class UnnamedStruct42 extends ffi.Struct {
+final class UnnamedStruct37 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDataStream;
 
   @ma_uint32()
   external int pageIndex;
 }
 
-final class UnnamedStruct43 extends ffi.Struct {
+final class UnnamedStruct38 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDataStream;
 
   @ma_uint64()
@@ -22213,10 +21867,10 @@ final class UnnamedUnion13 extends ffi.Union {
 }
 
 final class UnnamedUnion14 extends ffi.Union {
-  external UnnamedStruct44 reroute;
+  external UnnamedStruct39 reroute;
 }
 
-final class UnnamedStruct44 extends ffi.Struct {
+final class UnnamedStruct39 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pDevice;
 
   @ma_uint32()
@@ -22291,8 +21945,7 @@ final class ma_device_job_thread_config extends ffi.Struct {
 }
 
 final class ma_device_job_thread extends ffi.Struct {
-  @ma_thread()
-  external int thread;
+  external ma_thread thread;
 
   external ma_job_queue jobQueue;
 
@@ -22322,19 +21975,19 @@ final class ma_context_command__wasapi extends ffi.Struct {
 }
 
 final class UnnamedUnion15 extends ffi.Union {
-  external UnnamedStruct45 quit;
+  external UnnamedStruct40 quit;
 
-  external UnnamedStruct46 createAudioClient;
+  external UnnamedStruct41 createAudioClient;
 
-  external UnnamedStruct47 releaseAudioClient;
+  external UnnamedStruct42 releaseAudioClient;
 }
 
-final class UnnamedStruct45 extends ffi.Struct {
+final class UnnamedStruct40 extends ffi.Struct {
   @ffi.Int()
   external int unused;
 }
 
-final class UnnamedStruct46 extends ffi.Struct {
+final class UnnamedStruct41 extends ffi.Struct {
   @ffi.Int32()
   external int deviceType;
 
@@ -22345,7 +21998,7 @@ final class UnnamedStruct46 extends ffi.Struct {
   external ffi.Pointer<ffi.Int32> pResult;
 }
 
-final class UnnamedStruct47 extends ffi.Struct {
+final class UnnamedStruct42 extends ffi.Struct {
   external ffi.Pointer<ma_device> pDevice;
 
   @ffi.Int32()
@@ -22601,18 +22254,18 @@ typedef Dartma_decoder_tell_procFunction = int Function(
     ffi.Pointer<ma_decoder> pDecoder, ffi.Pointer<ma_int64> pCursor);
 
 final class UnnamedUnion16 extends ffi.Union {
-  external UnnamedStruct48 vfs;
+  external UnnamedStruct43 vfs;
 
-  external UnnamedStruct49 memory;
+  external UnnamedStruct44 memory;
 }
 
-final class UnnamedStruct48 extends ffi.Struct {
+final class UnnamedStruct43 extends ffi.Struct {
   external ffi.Pointer<ma_vfs> pVFS;
 
   external ma_vfs_file file;
 }
 
-final class UnnamedStruct49 extends ffi.Struct {
+final class UnnamedStruct44 extends ffi.Struct {
   external ffi.Pointer<ma_uint8> pData;
 
   @ffi.Size()
@@ -22739,10 +22392,10 @@ typedef Dartma_encoder_write_pcm_frames_procFunction = int Function(
     ffi.Pointer<ma_uint64> pFramesWritten);
 
 final class UnnamedUnion17 extends ffi.Union {
-  external UnnamedStruct50 vfs;
+  external UnnamedStruct45 vfs;
 }
 
-final class UnnamedStruct50 extends ffi.Struct {
+final class UnnamedStruct45 extends ffi.Struct {
   external ffi.Pointer<ma_vfs> pVFS;
 
   external ma_vfs_file file;
@@ -22855,12 +22508,12 @@ final class ma_noise extends ffi.Struct {
 }
 
 final class UnnamedUnion18 extends ffi.Union {
-  external UnnamedStruct51 pink;
+  external UnnamedStruct46 pink;
 
-  external UnnamedStruct52 brownian;
+  external UnnamedStruct47 brownian;
 }
 
-final class UnnamedStruct51 extends ffi.Struct {
+final class UnnamedStruct46 extends ffi.Struct {
   external ffi.Pointer<ffi.Pointer<ffi.Double>> bin;
 
   external ffi.Pointer<ffi.Double> accumulation;
@@ -22868,7 +22521,7 @@ final class UnnamedStruct51 extends ffi.Struct {
   external ffi.Pointer<ma_uint32> counter;
 }
 
-final class UnnamedStruct52 extends ffi.Struct {
+final class UnnamedStruct47 extends ffi.Struct {
   external ffi.Pointer<ffi.Double> accumulation;
 }
 
@@ -22922,20 +22575,20 @@ final class UnnamedUnion19 extends ffi.Union {
 
   external ffi.Pointer<ffi.Char> as_string;
 
-  external UnnamedStruct53 as_send_port;
+  external UnnamedStruct48 as_send_port;
 
-  external UnnamedStruct54 as_capability;
+  external UnnamedStruct49 as_capability;
 
-  external UnnamedStruct55 as_array;
+  external UnnamedStruct50 as_array;
 
-  external UnnamedStruct56 as_typed_data;
+  external UnnamedStruct51 as_typed_data;
 
-  external UnnamedStruct57 as_external_typed_data;
+  external UnnamedStruct52 as_external_typed_data;
 
-  external UnnamedStruct58 as_native_pointer;
+  external UnnamedStruct53 as_native_pointer;
 }
 
-final class UnnamedStruct53 extends ffi.Struct {
+final class UnnamedStruct48 extends ffi.Struct {
   @Dart_Port()
   external int id;
 
@@ -22947,19 +22600,19 @@ final class UnnamedStruct53 extends ffi.Struct {
 typedef Dart_Port = ffi.Int64;
 typedef DartDart_Port = int;
 
-final class UnnamedStruct54 extends ffi.Struct {
+final class UnnamedStruct49 extends ffi.Struct {
   @ffi.Int64()
   external int id;
 }
 
-final class UnnamedStruct55 extends ffi.Struct {
+final class UnnamedStruct50 extends ffi.Struct {
   @ffi.IntPtr()
   external int length;
 
   external ffi.Pointer<ffi.Pointer<_Dart_CObject>> values;
 }
 
-final class UnnamedStruct56 extends ffi.Struct {
+final class UnnamedStruct51 extends ffi.Struct {
   @ffi.Int32()
   external int type;
 
@@ -22988,7 +22641,7 @@ abstract class Dart_TypedData_Type {
   static const int Dart_TypedData_kInvalid = 15;
 }
 
-final class UnnamedStruct57 extends ffi.Struct {
+final class UnnamedStruct52 extends ffi.Struct {
   @ffi.Int32()
   external int type;
 
@@ -23009,7 +22662,7 @@ typedef Dart_HandleFinalizerFunction = ffi.Void Function(
 typedef DartDart_HandleFinalizerFunction = void Function(
     ffi.Pointer<ffi.Void> isolate_callback_data, ffi.Pointer<ffi.Void> peer);
 
-final class UnnamedStruct58 extends ffi.Struct {
+final class UnnamedStruct53 extends ffi.Struct {
   @ffi.IntPtr()
   external int ptr;
 
@@ -23197,21 +22850,21 @@ abstract class ma_resource_manager_data_supply_type {
 }
 
 final class UnnamedUnion20 extends ffi.Union {
-  external UnnamedStruct59 encoded;
+  external UnnamedStruct54 encoded;
 
-  external UnnamedStruct60 decoded;
+  external UnnamedStruct55 decoded;
 
-  external UnnamedStruct61 decodedPaged;
+  external UnnamedStruct56 decodedPaged;
 }
 
-final class UnnamedStruct59 extends ffi.Struct {
+final class UnnamedStruct54 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pData;
 
   @ffi.Size()
   external int sizeInBytes;
 }
 
-final class UnnamedStruct60 extends ffi.Struct {
+final class UnnamedStruct55 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pData;
 
   @ma_uint64()
@@ -23230,7 +22883,7 @@ final class UnnamedStruct60 extends ffi.Struct {
   external int sampleRate;
 }
 
-final class UnnamedStruct61 extends ffi.Struct {
+final class UnnamedStruct56 extends ffi.Struct {
   external ma_paged_audio_buffer_data data;
 
   @ma_uint64()
@@ -23853,7 +23506,7 @@ final class ma_engine_node extends ffi.Struct {
   @ma_uint32()
   external int pinnedListenerIndex;
 
-  external UnnamedStruct62 fadeSettings;
+  external UnnamedStruct57 fadeSettings;
 
   @ma_bool8()
   external int ownsHeap;
@@ -23861,7 +23514,7 @@ final class ma_engine_node extends ffi.Struct {
   external ffi.Pointer<ffi.Void> pHeap;
 }
 
-final class UnnamedStruct62 extends ffi.Struct {
+final class UnnamedStruct57 extends ffi.Struct {
   external ma_atomic_float volumeBeg;
 
   external ma_atomic_float volumeEnd;
