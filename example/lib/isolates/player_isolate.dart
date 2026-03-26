@@ -209,9 +209,13 @@ class AudioPlayer {
       decoder = WavAudioDecoder(dataSource: dataSource);
     } on Exception catch (_) {
       try {
-        decoder = MaAudioDecoder(dataSource: dataSource, expectedSampleFormat: SampleFormat.int32);
-      } on Exception catch (e) {
-        throw Exception('Could not find the decoder.\nInner exception: $e');
+        decoder = AacAudioDecoder(dataSource: dataSource);
+      } on Exception catch (_) {
+        try {
+          decoder = MaAudioDecoder(dataSource: dataSource, expectedSampleFormat: SampleFormat.int32);
+        } on Exception catch (e) {
+          throw Exception('Could not find the decoder.\nInner exception: $e');
+        }
       }
     }
 

@@ -14,6 +14,7 @@ export 'src/data_source/abstract/audio_input_data_source.dart';
 export 'src/data_source/abstract/audio_output_data_source.dart';
 export 'src/data_source/audio_file_data_source.dart';
 export 'src/data_source/audio_memory_data_source.dart';
+export 'src/decoder/aac_audio_decoder.dart';
 export 'src/decoder/audio_decoder.dart';
 export 'src/decoder/ma_audio_decoder.dart';
 export 'src/decoder/wav/wav_audio_decoder.dart';
