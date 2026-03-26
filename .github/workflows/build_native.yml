@@ -96,8 +96,8 @@ jobs:
           cmake ../../.. `
             -DCMAKE_INSTALL_PREFIX="../../../build/windows/$ABI" `
             -DOS=WIN32 `
-            -DCMAKE_C_FLAGS="-DMAB_WIN32 -DCA_WIN32" `
-            -DCMAKE_CXX_FLAGS="-DMAB_WIN32 -DCA_WIN32" `
+            -DCMAKE_C_FLAGS="-DMAB_WIN32" `
+            -DCMAKE_CXX_FLAGS="-DMAB_WIN32" `
             -DBUILD_SHARED_LIBS=ON
 
           cmake --build . --config Release
