@@ -30,7 +30,7 @@ static inline ma_result read_ring_buffer(ca_device *pDevice, void *pOutput, ma_u
             return result;
         }
 
-        CA_COPY_MEMORY(pOutput + (bpf * framesRead), pBuffer, bpf * actualRead);
+        CA_COPY_MEMORY((ma_uint8 *)pOutput + (bpf * framesRead), pBuffer, bpf * actualRead);
 
         result = ma_pcm_rb_commit_read(&pDevice->buffer, actualRead);
         if (result != MA_SUCCESS && result != MA_AT_END)
@@ -77,7 +77,7 @@ static inline ma_result write_ring_buffer(ca_device *pDevice, const void *pInput
             return result;
         }
 
-        CA_COPY_MEMORY(pBuffer, pInput + (bpf * framesWrite), bpf * actualWrite);
+        CA_COPY_MEMORY(pBuffer, (const ma_uint8 *)pInput + (bpf * framesWrite), bpf * actualWrite);
 
         result = ma_pcm_rb_commit_write(&pDevice->buffer, actualWrite);
         if (result != MA_SUCCESS && result != MA_AT_END)
