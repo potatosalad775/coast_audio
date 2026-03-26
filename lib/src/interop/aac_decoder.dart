@@ -8,6 +8,9 @@ class AacDecoder {
   AacDecoder({
     required this.dataSource,
   }) {
+    if (dataSource.canSeek) {
+      dataSource.position = 0;
+    }
     _pUserData = _AacDecoderCallback.register(this);
     final result = _interop.bindings.ca_aac_decoder_init(
       _pDecoder,
