@@ -2,9 +2,9 @@ name: build_native
 
 on:
   push:
-    branches: ["main"]
+    branches: ["mac_and_win"]
   pull_request:
-    branches: ["main"]
+    branches: ["mac_and_win"]
   workflow_dispatch:
 
 jobs:

@@ -7,9 +7,9 @@ name: coast_audio
 
 on:
   push:
-    branches: ["main"]
+    branches: ["mac_and_win"]
   pull_request:
-    branches: ["main"]
+    branches: ["mac_and_win"]
 
 jobs:
   analyze_and_format:
