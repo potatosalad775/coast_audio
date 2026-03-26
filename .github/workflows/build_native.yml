@@ -78,9 +78,6 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,26 +86,27 @@ jobs:
       - name: Build Windows native libraries
         working-directory: native
         run: |
-          rm -rf build
-          ABI=x86_64
+          $ABI = "x86_64"
 
-          mkdir -p build/windows/$ABI
-          cd build/windows/$ABI
+          if (Test-Path build) { Remove-Item -Recurse -Force build }
 
-          cmake ../../.. \
-            -G "MinGW Makefiles" \
-            -DCMAKE_INSTALL_PREFIX="../../../build/windows/$ABI" \
-            -DOS=WIN32 \
-            -DCMAKE_C_FLAGS='-DMAB_WIN32' \
-            -DCMAKE_CXX_FLAGS='-DMAB_WIN32' \
+          New-Item -ItemType Directory -Force -Path "build/windows/$ABI" | Out-Null
+          Set-Location "build/windows/$ABI"
+
+          cmake ../../.. `
+            -DCMAKE_INSTALL_PREFIX="../../../build/windows/$ABI" `
+            -DOS=WIN32 `
+            -DCMAKE_C_FLAGS="-DMAB_WIN32 -DCA_WIN32" `
+            -DCMAKE_CXX_FLAGS="-DMAB_WIN32 -DCA_WIN32" `
             -DBUILD_SHARED_LIBS=ON
 
           cmake --build . --config Release
           cmake --install . --config Release
 
-          cd ../../..
-          mkdir -p prebuilt/windows/$ABI
-          cp "build/windows/$ABI/bin/libcoast_audio.dll" prebuilt/windows/$ABI/libcoast_audio.dll
+          Set-Location ../../..
+          New-Item -ItemType Directory -Force -Path "prebuilt/windows/$ABI" | Out-Null
+          Copy-Item "build/windows/$ABI/Release/coast_audio.dll" "prebuilt/windows/$ABI/coast_audio.dll" -ErrorAction SilentlyContinue
+          Copy-Item "build/windows/$ABI/bin/coast_audio.dll" "prebuilt/windows/$ABI/coast_audio.dll" -ErrorAction SilentlyContinue
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
