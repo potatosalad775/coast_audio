@@ -1,3 +1,9 @@
 [submodule "native/miniaudio"]
 	path = native/miniaudio
 	url = https://github.com/mackron/miniaudio.git
+[submodule "native/fdk-aac"]
+	path = native/fdk-aac
+	url = https://github.com/mstorsjo/fdk-aac.git
+[submodule "native/minimp4"]
+	path = native/minimp4
+	url = https://github.com/lieff/minimp4.git
