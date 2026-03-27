@@ -7,7 +7,9 @@ import 'package:example/models/audio_state.dart';
 import 'package:example/pages/backend_page.dart';
 import 'package:flutter/material.dart';
 
-Future<void> main() async {
+/// Pass file paths as command-line arguments to auto-load them in the player.
+/// Example: flutter run -d linux -- /path/to/audio.m4a /path/to/other.wav
+Future<void> main(List<String> args) async {
   AudioResourceManager.isDisposeLogEnabled = true;
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,11 +19,13 @@ Future<void> main() async {
     await session.setActive(true);
   }
 
-  runApp(const App());
+  runApp(App(initialFilePaths: args));
 }
 
 class App extends StatefulWidget {
-  const App({super.key});
+  const App({super.key, this.initialFilePaths = const []});
+
+  final List<String> initialFilePaths;
 
   static AppState of(BuildContext context) {
     return context.findAncestorStateOfType<AppState>()!;
@@ -49,7 +53,10 @@ class AppState extends State<App> {
       ),
       home: switch (_state) {
         AudioStateInitial() => const BackendPage(),
-        AudioStateConfigured() => MainPage(audio: _state as AudioStateConfigured),
+        AudioStateConfigured() => MainPage(
+            audio: _state as AudioStateConfigured,
+            initialFilePaths: widget.initialFilePaths,
+          ),
       },
     );
   }

@@ -53,15 +53,15 @@ struct ca_aac_decoder {
     int initialized;
 };
 
-/* minimp4 read callback - reads from our buffered file data */
+/* minimp4 read callback - reads from our buffered file data.
+   Returns 0 on success, non-zero on error (minimp4 convention). */
 static int mp4_read_callback(int64_t offset, void* buffer, size_t size, void* token) {
     ca_aac_decoder* dec = (ca_aac_decoder*)token;
     if (offset + (int64_t)size > dec->fileSize) {
-        size = (size_t)(dec->fileSize - offset);
+        return -1; /* read beyond end of file */
     }
-    if (size <= 0) return 0;
     memcpy(buffer, dec->fileData + offset, size);
-    return (int)size;
+    return 0; /* success */
 }
 
 /* Read entire file into memory via callbacks */

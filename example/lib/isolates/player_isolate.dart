@@ -203,18 +203,29 @@ class AudioPlayer {
     required AudioInputDataSource dataSource,
     AudioDeviceId? deviceId,
   }) {
-    // Find the decoder by trying to decode the audio data with different decoders
+    // Find the decoder by trying to decode the audio data with different decoders.
+    // Order: WAV (pure Dart) → AAC/M4A (FDK-AAC) → miniaudio fallback (MP3, FLAC, etc.)
     AudioDecoder decoder;
+    final errors = <String, String>{};
     try {
       decoder = WavAudioDecoder(dataSource: dataSource);
-    } on Exception catch (_) {
+    } on Exception catch (e) {
+      errors['WAV'] = e.toString();
+      if (dataSource.canSeek) dataSource.position = 0;
       try {
         decoder = AacAudioDecoder(dataSource: dataSource);
-      } on Exception catch (_) {
+      } on Exception catch (e) {
+        errors['AAC'] = e.toString();
+        if (dataSource.canSeek) dataSource.position = 0;
         try {
           decoder = MaAudioDecoder(dataSource: dataSource, expectedSampleFormat: SampleFormat.int32);
         } on Exception catch (e) {
-          throw Exception('Could not find the decoder.\nInner exception: $e');
+          errors['miniaudio'] = e.toString();
+          throw Exception(
+            'Could not find a suitable decoder.\n'
+            'Tried decoders:\n'
+            '${errors.entries.map((e) => '  ${e.key}: ${e.value}').join('\n')}',
+          );
         }
       }
     }
