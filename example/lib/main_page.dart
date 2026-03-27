@@ -12,8 +12,10 @@ class MainPage extends StatefulWidget {
   const MainPage({
     super.key,
     required this.audio,
+    this.initialFilePaths = const [],
   });
   final AudioStateConfigured audio;
+  final List<String> initialFilePaths;
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -44,10 +46,13 @@ class _MainPageState extends State<MainPage> {
               ),
               ActionTile(
                 title: 'Audio Player',
-                body: 'Play audio from wav file',
+                body: 'Play audio from file (WAV, AAC/M4A, MP3, FLAC)',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => PlayerPage(audio: widget.audio),
+                    builder: (context) => PlayerPage(
+                      audio: widget.audio,
+                      initialFilePaths: widget.initialFilePaths,
+                    ),
                   ),
                 ),
               ),

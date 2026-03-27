@@ -3,6 +3,20 @@ import 'dart:ffi';
 import 'package:coast_audio/coast_audio.dart';
 import 'package:coast_audio/src/interop/internal/generated/bindings.dart';
 
+// Custom callback typedefs using Int32 instead of the ABI-dependent Int.
+// This fixes "Exceptional return value must be a constant" errors in Dart 3.7+
+// where Int's size is unknown at compile time. C int is 32-bit on all
+// platforms supported by coast_audio.
+typedef _AacReadProcNative = Int32 Function(
+    Pointer<Void> pUserData,
+    Pointer<Void> pBufferOut,
+    Int32 bytesToRead,
+    Pointer<Int32> pBytesRead);
+typedef _AacSeekProcNative = Int32 Function(
+    Pointer<Void> pUserData, Int64 byteOffset, Int32 origin);
+
+const int _kAacError = -1;
+
 /// Low-level AAC decoder interop wrapping the native ca_aac_decoder.
 class AacDecoder {
   AacDecoder({
@@ -12,10 +26,13 @@ class AacDecoder {
       dataSource.position = 0;
     }
     _pUserData = _AacDecoderCallback.register(this);
+    // Cast Int32 callback pointers to the Int-based types expected by the
+    // generated bindings. This is safe because Int is Int32 on all supported
+    // platforms.
     final result = _interop.bindings.ca_aac_decoder_init(
       _pDecoder,
-      _AacDecoderCallback.onRead,
-      _AacDecoderCallback.onSeek,
+      _AacDecoderCallback.onRead.cast(),
+      _AacDecoderCallback.onSeek.cast(),
       _pUserData,
     );
 
@@ -90,7 +107,7 @@ class AacDecoder {
   }
 
   int _onRead(
-      Pointer<Void> pBufferOut, int bytesToRead, Pointer<Int> pBytesRead) {
+      Pointer<Void> pBufferOut, int bytesToRead, Pointer<Int32> pBytesRead) {
     pBytesRead.value =
         dataSource.readBytes(pBufferOut.cast<Uint8>().asTypedList(bytesToRead));
     return 0;
@@ -116,10 +133,13 @@ class AacDecoder {
 }
 
 class _AacDecoderCallback {
+  // Use custom typedefs with Int32 (fixed-size) instead of ffigen's Int
+  // (ABI-dependent) to fix "Exceptional return value must be a constant"
+  // errors in Dart 3.7+ where Int's size is unknown at compile time.
   static final onRead =
-      Pointer.fromFunction<ca_aac_read_procFunction>(_onRead, -1);
+      Pointer.fromFunction<_AacReadProcNative>(_onRead, _kAacError);
   static final onSeek =
-      Pointer.fromFunction<ca_aac_seek_procFunction>(_onSeek, -1);
+      Pointer.fromFunction<_AacSeekProcNative>(_onSeek, _kAacError);
 
   static final _instances = <Pointer<Void>, AacDecoder>{};
 
@@ -135,7 +155,7 @@ class _AacDecoderCallback {
   }
 
   static int _onRead(Pointer<Void> pUserData, Pointer<Void> pBufferOut,
-      int bytesToRead, Pointer<Int> pBytesRead) {
+      int bytesToRead, Pointer<Int32> pBytesRead) {
     final instance = _instances[pUserData];
     if (instance == null) return -1;
     return instance._onRead(pBufferOut, bytesToRead, pBytesRead);

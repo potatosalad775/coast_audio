@@ -7,8 +7,10 @@ class PlayerPage extends StatefulWidget {
   const PlayerPage({
     super.key,
     required this.audio,
+    this.initialFilePaths = const [],
   });
   final AudioStateConfigured audio;
+  final List<String> initialFilePaths;
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
@@ -16,6 +18,15 @@ class PlayerPage extends StatefulWidget {
 
 class _PlayerPageState extends State<PlayerPage> {
   final files = <XFile>[];
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-load files passed via command-line arguments
+    for (final path in widget.initialFilePaths) {
+      files.add(XFile(path));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
