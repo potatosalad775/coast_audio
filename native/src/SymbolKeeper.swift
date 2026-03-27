@@ -6,6 +6,16 @@ import coast_audio
 @objc public final class CoastAudioSymbolKeeper: NSObject {
   @objc public static func keep() {
     let symbols = [
+      // ca_aac.h
+      ca_aac_decoder_sizeof,
+      ca_aac_decoder_init,
+      ca_aac_decoder_uninit,
+      ca_aac_decoder_get_format,
+      ca_aac_decoder_get_length_in_pcm_frames,
+      ca_aac_decoder_get_cursor_in_pcm_frames,
+      ca_aac_decoder_seek_to_pcm_frame,
+      ca_aac_decoder_read_pcm_frames,
+
       // coast_audio.h
       coast_audio_get_version,
       

@@ -99,9 +99,13 @@ class AudioIsolate<TInitialMessage> {
   }
 
   Future<TResponse?> request<TResponse>(dynamic payload) async {
-    if (_session == null) {
+    final session = _session;
+    if (session == null) {
       throw StateError('AudioIsolate is not running');
     }
+
+    // Ensure the messenger is attached before sending the request.
+    await session.launchCompleter.future;
 
     return _messenger.request(payload);
   }
