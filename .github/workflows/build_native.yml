@@ -105,8 +105,8 @@ jobs:
 
           Set-Location ../../..
           New-Item -ItemType Directory -Force -Path "prebuilt/windows/$ABI" | Out-Null
-          Copy-Item "build/windows/$ABI/Release/coast_audio.dll" "prebuilt/windows/$ABI/coast_audio.dll" -ErrorAction SilentlyContinue
-          Copy-Item "build/windows/$ABI/bin/coast_audio.dll" "prebuilt/windows/$ABI/coast_audio.dll" -ErrorAction SilentlyContinue
+          Copy-Item "build/windows/$ABI/Release/coast_audio.dll" "prebuilt/windows/$ABI/libcoast_audio.dll" -ErrorAction SilentlyContinue
+          Copy-Item "build/windows/$ABI/bin/coast_audio.dll" "prebuilt/windows/$ABI/libcoast_audio.dll" -ErrorAction SilentlyContinue
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
