@@ -59,10 +59,12 @@ class AllocatedAudioFrames extends AudioFrames with AudioResourceMixin {
   /// internal buffer memory allocator.
   final Memory memory;
 
+  AudioBuffer? _cachedBuffer;
+
   @override
   AudioBuffer lock() {
     _mutex.lock();
-    return AudioBuffer(
+    return _cachedBuffer ??= AudioBuffer(
       root: this,
       pBuffer: _pBuffer,
       sizeInBytes: sizeInBytes,

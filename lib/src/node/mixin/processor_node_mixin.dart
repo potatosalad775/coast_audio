@@ -5,10 +5,11 @@ mixin ProcessorNodeMixin on SingleInNodeMixin {
   @override
   AudioReadResult read(AudioOutputBus outputBus, AudioBuffer buffer) {
     final originalResult = inputBus.connectedBus!.read(buffer);
-    return process(
-      buffer.limit(originalResult.frameCount),
-      originalResult.isEnd,
-    );
+    // Skip limit() allocation when upstream returned a full buffer.
+    final limited = originalResult.frameCount == buffer.sizeInFrames
+        ? buffer
+        : buffer.limit(originalResult.frameCount);
+    return process(limited, originalResult.isEnd);
   }
 
   /// Process the input buffer and return the result.

@@ -4,6 +4,7 @@ import 'generated/bindings.dart';
 
 extension IntExtension on int {
   void throwMaResultIfNeeded() {
+    if (this == 0) return; // MA_SUCCESS fast path — no closure, no enum lookup.
     asMaResult().throwIfNeeded();
   }
 
