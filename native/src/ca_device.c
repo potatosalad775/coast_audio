@@ -250,7 +250,29 @@ ma_result ca_device_get_device_info(ca_device *pDevice, ma_device_info *pDeviceI
 
 ma_result ca_device_start(ca_device *pDevice)
 {
-    return ma_device_start(&pDevice->device);
+    ma_result result = ma_device_start(&pDevice->device);
+    if (result != MA_SUCCESS)
+    {
+        /*
+         * On Android/AAudio, ma_device_start() can return failure even when
+         * the underlying AAudio stream started asynchronously. This leaves
+         * miniaudio in "stopped" state while AAudio is "started":
+         *   - ma_device_stop() is a no-op  (miniaudio thinks it's already stopped)
+         *   - ma_device_start() always hits AAUDIO_ERROR_INVALID_STATE (-895)
+         *
+         * Recovery: wait for the async STARTING->STARTED transition, force
+         * miniaudio's state to "started" so that ma_device_stop() actually
+         * tears down the AAudio stream, then retry with clean state.
+         */
+        ma_sleep(200);
+        c89atomic_exchange_i32((c89atomic_int32 *)&pDevice->device.state,
+                               (c89atomic_int32)ma_device_state_started);
+        ma_device_stop(&pDevice->device);
+        ma_pcm_rb_reset(&pDevice->buffer);
+        ma_sleep(50);
+        result = ma_device_start(&pDevice->device);
+    }
+    return result;
 }
 
 ma_result ca_device_stop(ca_device *pDevice)
