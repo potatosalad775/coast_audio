@@ -73,7 +73,8 @@ extension AudioBufferExtension on AudioBuffer {
   /// Modified data is reflected in the buffer.
   Float32List asFloat32ListView({int? frames}) {
     assert((frames ?? sizeInFrames) <= sizeInFrames);
-    return pBuffer.cast<Float>().asTypedList((frames ?? sizeInFrames) * format.channels);
+    final byteCount = (frames ?? sizeInFrames) * format.bytesPerFrame;
+    return pBuffer.cast<Float>().asTypedList(byteCount ~/ 4);
   }
 
   /// Copy the buffer as a list of [Float32] and returns it.
