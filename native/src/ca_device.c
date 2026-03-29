@@ -1,8 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#ifndef _WIN32
+#ifdef _WIN32
+#include <windows.h>
+#define ca_sleep_ms(ms) Sleep((DWORD)(ms))
+#else
 #include <dlfcn.h>
+#include <unistd.h>
+#define ca_sleep_ms(ms) usleep((unsigned)(ms) * 1000u)
 #endif
 #include <stdio.h>
 #include "ca_device.h"
@@ -264,12 +269,13 @@ ma_result ca_device_start(ca_device *pDevice)
          * miniaudio's state to "started" so that ma_device_stop() actually
          * tears down the AAudio stream, then retry with clean state.
          */
-        ma_sleep(200);
-        c89atomic_exchange_i32((c89atomic_int32 *)&pDevice->device.state,
-                               (c89atomic_int32)ma_device_state_started);
+        ca_sleep_ms(200);
+        /* Force miniaudio's internal state so ma_device_stop() takes effect.
+           Same-thread volatile write + subsequent function call is sufficient. */
+        *(volatile int *)&pDevice->device.state = (int)ma_device_state_started;
         ma_device_stop(&pDevice->device);
         ma_pcm_rb_reset(&pDevice->buffer);
-        ma_sleep(50);
+        ca_sleep_ms(50);
         result = ma_device_start(&pDevice->device);
     }
     return result;
