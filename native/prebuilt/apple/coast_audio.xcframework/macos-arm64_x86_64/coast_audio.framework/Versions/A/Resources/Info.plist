@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>24G517</string>
+	<string>25F84</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>coast_audio</string>
 	<key>CFBundleIdentifier</key>
-	<string>work.kscafe.coast_audio</string>
+	<string>work.kscafe.coast-audio</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -25,19 +25,19 @@
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>24F74</string>
+	<string>25F70</string>
 	<key>DTPlatformName</key>
 	<string>macosx</string>
 	<key>DTPlatformVersion</key>
-	<string>15.5</string>
+	<string>26.5</string>
 	<key>DTSDKBuild</key>
-	<string>24F74</string>
+	<string>25F70</string>
 	<key>DTSDKName</key>
-	<string>macosx15.5</string>
+	<string>macosx26.5</string>
 	<key>DTXcode</key>
-	<string>1640</string>
+	<string>2660</string>
 	<key>DTXcodeBuild</key>
-	<string>16F6</string>
+	<string>17F113</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>11.0</string>
 </dict>

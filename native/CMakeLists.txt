@@ -67,7 +67,7 @@ if ("${OS}" STREQUAL "APPLE")
 
   set_target_properties(${PROJECT_NAME} PROPERTIES
     FRAMEWORK TRUE
-    MACOSX_FRAMEWORK_IDENTIFIER "work.kscafe.coast_audio"
+    MACOSX_FRAMEWORK_IDENTIFIER "work.kscafe.coast-audio"
   )
 
   install (TARGETS ${PROJECT_NAME} FRAMEWORK DESTINATION "prebuilt/apple/${PLATFORM}")
