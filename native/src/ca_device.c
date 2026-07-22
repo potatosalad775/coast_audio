@@ -256,7 +256,8 @@ ma_result ca_device_get_device_info(ca_device *pDevice, ma_device_info *pDeviceI
 ma_result ca_device_start(ca_device *pDevice)
 {
     ma_result result = ma_device_start(&pDevice->device);
-    if (result != MA_SUCCESS)
+    if (result != MA_SUCCESS && pDevice->device.pContext != NULL &&
+        pDevice->device.pContext->backend == ma_backend_aaudio)
     {
         /*
          * On Android/AAudio, ma_device_start() can return failure even when
@@ -268,6 +269,10 @@ ma_result ca_device_start(ca_device *pDevice)
          * Recovery: wait for the async STARTING->STARTED transition, force
          * miniaudio's state to "started" so that ma_device_stop() actually
          * tears down the AAudio stream, then retry with clean state.
+         *
+         * This recovery is scoped to AAudio only — other backends (e.g.
+         * OpenSL ES) do not exhibit this async-start race and the
+         * force-state-write could corrupt their internal state.
          */
         ca_sleep_ms(200);
         /* Force miniaudio's internal state so ma_device_stop() takes effect.
